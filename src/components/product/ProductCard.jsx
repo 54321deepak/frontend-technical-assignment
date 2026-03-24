@@ -33,8 +33,10 @@ const ProductCard = ({ product, onRemove }) => {
   };
   return (
     <div className="product-card">
-      <Link to={`/product/${product.id}`} className="image-container">
-        <img src={product.thumbnail} alt={product.title} loading="lazy" />
+      <div className="image-container">
+        <Link to={`/product/${product.id}`} style={{ display: 'block', width: '100%', height: '100%' }}>
+          <img src={product.thumbnail} alt={product.title} loading="lazy" />
+        </Link>
         <div className="card-actions">
           {onRemove ? (
             <button
@@ -64,7 +66,7 @@ const ProductCard = ({ product, onRemove }) => {
             <FaShoppingCart />
           </button>
         </div>
-      </Link>
+      </div>
       <Link to={`/product/${product.id}`} className="product-info">
         <span className="category">{product.category}</span>
         <h3 className="title">{product.title}</h3>

@@ -272,7 +272,7 @@ body.dark .featured-section {
 
   section.categories-section,
   section.featured-section {
-    padding: 1rem 2rem 1rem !important;
+    padding: 1rem 0rem 1rem !important;
   }
 }
 
