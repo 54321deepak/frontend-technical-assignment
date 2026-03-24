@@ -1,0 +1,150 @@
+import React, { useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  FaShoppingCart,
+  FaHeart,
+  FaSearch,
+  FaSun,
+  FaMoon,
+  FaBars,
+  FaTimes,
+  FaUser,
+} from "react-icons/fa";
+import { toggleDarkMode } from "../../redux/slices/themeSlice";
+import { logout } from "../../redux/slices/authSlice";
+import AuthModal from "../auth/AuthModal";
+import toast from "react-hot-toast";
+import "../../styles/Header.css";
+const Header = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { items: cartItems } = useSelector((state) => state.cart);
+  const { items: wishlistItems } = useSelector((state) => state.wishlist);
+  const { isDarkMode } = useSelector((state) => state.theme);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const wishlistCount = wishlistItems.length;
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const openAuthModal = (mode = "login") => {
+    setAuthMode(mode);
+    setIsAuthModalOpen(true);
+    setIsMenuOpen(false);
+  };
+  const handleLogout = () => {
+    dispatch(logout());
+    toast.success("Logged out successfully");
+    setIsUserMenuOpen(false);
+    navigate("/");
+  };
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen(!isUserMenuOpen);
+  };
+  return (
+    <header className="header">
+      <div className="container header-container">
+        <Link to="/" className="logo">
+          <img src="/favicon.svg" alt="ShopNow Logo" className="logo-img" />
+          <span>Shop</span>Now
+        </Link>
+        <nav className={`nav-menu ${isMenuOpen ? "active" : ""}`}>
+          <ul className="nav-links">
+            <li>
+              <NavLink to="/" end onClick={() => setIsMenuOpen(false)}>
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/shop" onClick={() => setIsMenuOpen(false)}>
+                Shop
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/categories" onClick={() => setIsMenuOpen(false)}>
+                Categories
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/contact" onClick={() => setIsMenuOpen(false)}>
+                Contact
+              </NavLink>
+            </li>
+          </ul>
+        </nav>
+        <div className="header-actions">
+          <button
+            className="action-btn-circle"
+            onClick={() => dispatch(toggleDarkMode())}
+          >
+            {isDarkMode ? <FaSun /> : <FaMoon />}
+          </button>
+          <Link to="/wishlist" className="action-btn-circle">
+            <FaHeart />
+            {wishlistCount > 0 && (
+              <span className="badge">{wishlistCount}</span>
+            )}
+          </Link>
+          <Link to="/cart" className="action-btn-circle">
+            <FaShoppingCart />
+            {cartCount > 0 && <span className="badge">{cartCount}</span>}
+          </Link>
+          {isAuthenticated ? (
+            <div className="user-menu-container">
+              <button className="user-profile-btn" onClick={toggleUserMenu}>
+                <FaUser />
+                <span className="user-name">{user?.username || "Profile"}</span>
+              </button>
+              {isUserMenuOpen && (
+                <ul className="user-dropdown">
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="logout-btn"
+                      style={{
+                        borderTop: "none",
+                        marginTop: 0,
+                        paddingTop: "0.75rem",
+                      }}
+                    >
+                      <FaTimes /> Logout
+                    </button>
+                  </li>
+                </ul>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={() => openAuthModal("login")}
+              className="btn btn-primary"
+              style={{ padding: "0.5rem 1.25rem" }}
+            >
+              Login
+            </button>
+          )}
+          <button
+            className="menu-toggle"
+            onClick={toggleMenu}
+            style={{
+              background: "none",
+              border: "none",
+              color: "var(--text-main)",
+              cursor: "pointer",
+            }}
+          >
+            {isMenuOpen ? <FaTimes /> : <FaBars />}
+          </button>
+        </div>
+      </div>
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialMode={authMode}
+      />
+    </header>
+  );
+};
+export default Header;
