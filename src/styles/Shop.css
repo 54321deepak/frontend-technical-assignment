@@ -4,7 +4,7 @@
 }
 
 .shop-header {
-    margin-top: 10px;
+    margin-top: 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -139,6 +139,12 @@
     top: calc(var(--header-h) + 2rem);
 }
 
+.shop-content {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+}
+
 .sidebar-header {
     display: none;
     justify-content: space-between;
@@ -189,7 +195,60 @@
 .category-list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Custom Scrollbar for Category List */
+.category-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.category-list::-webkit-scrollbar-track {
+    background: var(--bg-app);
+    border-radius: 10px;
+}
+
+.category-list::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+.category-list:hover::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+}
+
+/* Skeleton Styles */
+.skeleton-item {
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-md);
+    background: transparent;
+}
+
+.skeleton-text {
+    height: 18px;
+    width: 100%;
+    background: linear-gradient(
+        90deg,
+        var(--bg-app) 25%,
+        var(--border-color) 50%,
+        var(--bg-app) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite linear;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 .category-list li {
@@ -228,6 +287,15 @@
     border: 1px solid var(--border-color);
     color: var(--text-main);
     text-align: center;
+    -moz-appearance: textfield; /* Firefox */
+    appearance: textfield;
+}
+
+/* Hide Spinners for Chrome, Safari, Edge, Opera */
+.price-inputs input::-webkit-outer-spin-button,
+.price-inputs input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .filter-group input[type="range"] {

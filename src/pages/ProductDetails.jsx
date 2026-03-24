@@ -38,10 +38,10 @@ const ProductDetails = () => {
     const handleAddToCart = () => {
         if (isInCart) {
             dispatch(removeFromCart(product.id));
-            toast.error(`Removed from Cart — ${product.title}`);
+            toast.error("Removed from Cart");
         } else {
             dispatch(addToCart(product));
-            toast.success(`Added to Cart — ${product.title}`);
+            toast.success("Added to Cart");
         }
     };
     const handleIncrease = () => {
@@ -56,15 +56,15 @@ const ProductDetails = () => {
             );
         } else {
             dispatch(removeFromCart(product.id));
-            toast.error(`Removed from Cart — ${product.title}`);
+            toast.error("Removed from Cart");
         }
     };
     const handleToggleWishlist = () => {
         dispatch(toggleWishlist(product));
         if (isInWishlist) {
-            toast.error(`Removed from Wishlist — ${product.title}`);
+            toast.error("Removed from Wishlist");
         } else {
-            toast.success(`Added to Wishlist — ${product.title}`);
+            toast.success("Added to Wishlist");
         }
     };
     useEffect(() => {

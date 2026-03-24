@@ -19,22 +19,35 @@ import "../styles/Shop.css";
 const Shop = () => {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { products, categories, loading, total } = useSelector(
-    (state) => state.products,
-  );
+  const { products, categories, productsLoading, categoriesLoading, total } =
+    useSelector((state) => state.products);
   const query = searchParams.get("q") || "";
   const category = searchParams.get("category") || "all";
-  const minPrice = Number(searchParams.get("minPrice")) || 0;
-  const maxPrice = Number(searchParams.get("maxPrice")) || 2000;
+  const minPrice = searchParams.get("minPrice") !== null 
+    ? Number(searchParams.get("minPrice")) 
+    : 0;
+  const maxPrice = searchParams.get("maxPrice") !== null 
+    ? Number(searchParams.get("maxPrice")) 
+    : 2000;
   const sortBy = searchParams.get("sortBy") || "default";
   const page = Number(searchParams.get("page")) || 1;
   const limit = 12;
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState(query);
+  const [priceRange, setPriceRange] = useState({ min: minPrice, max: maxPrice });
+
   useEffect(() => {
-    setSearchTerm(query);
-  }, [query]);
+    setPriceRange({ min: minPrice, max: maxPrice });
+  }, [minPrice, maxPrice]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (priceRange.min !== minPrice) handleParamChange("minPrice", priceRange.min.toString());
+      if (priceRange.max !== maxPrice) handleParamChange("maxPrice", priceRange.max.toString());
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [priceRange, minPrice, maxPrice]);
   const sortOptions = [
     { value: "default", label: "Sort by" },
     { value: "price-low", label: "Price: Low to High" },
@@ -54,7 +67,6 @@ const Shop = () => {
         query: query || null,
       }),
     );
-    window.scrollTo(0, 0);
   }, [dispatch, category, query, page]);
   const filteredProducts = useMemo(() => {
     let result = [...products];
@@ -70,7 +82,7 @@ const Shop = () => {
   }, [products, minPrice, maxPrice, sortBy]);
   const handleParamChange = (key, value) => {
     const newParams = new URLSearchParams(searchParams);
-    if (value && value !== "all" && value !== "0" && value !== "default") {
+    if (value !== "" && value !== null && value !== undefined && value !== "all" && value !== "default") {
       newParams.set(key, value);
     } else {
       newParams.delete(key);
@@ -165,12 +177,12 @@ const Shop = () => {
               </button>
             )}
           </form>
-          <button
+          {/* <button
             className="mobile-filter-btn btn btn-outline"
             onClick={() => setShowMobileFilters(true)}
           >
             <FaFilter /> Filters
-          </button>
+          </button> */}
           <div
             className="custom-sort-dropdown"
             tabIndex={0}
@@ -230,19 +242,29 @@ const Shop = () => {
               >
                 All Categories
               </li>
-              {categories.map((cat, idx) => {
-                const catSlug = typeof cat === "string" ? cat : cat.slug;
-                const catName = typeof cat === "string" ? cat : cat.name;
-                return (
-                  <li
-                    key={idx}
-                    className={category === catSlug ? "active" : ""}
-                    onClick={() => handleParamChange("category", catSlug)}
-                  >
-                    {catName}
-                  </li>
-                );
-              })}
+              {categoriesLoading ? (
+                Array(10)
+                  .fill(0)
+                  .map((_, i) => (
+                    <li key={`skeleton-${i}`} className="skeleton-item">
+                      <div className="skeleton-text"></div>
+                    </li>
+                  ))
+              ) : (
+                categories.map((cat, idx) => {
+                  const catSlug = typeof cat === "string" ? cat : cat.slug;
+                  const catName = typeof cat === "string" ? cat : cat.name;
+                  return (
+                    <li
+                      key={idx}
+                      className={category === catSlug ? "active" : ""}
+                      onClick={() => handleParamChange("category", catSlug)}
+                    >
+                      {catName}
+                    </li>
+                  );
+                })
+              )}
             </ul>
           </div>
           <div className="filter-group">
@@ -251,29 +273,36 @@ const Shop = () => {
               <input
                 type="number"
                 placeholder="Min"
-                value={minPrice}
-                onChange={(e) => handleParamChange("minPrice", e.target.value)}
+                value={priceRange.min}
+                onChange={(e) => {
+                  const val = e.target.value === "" ? 0 : Number(e.target.value);
+                  setPriceRange(prev => ({ ...prev, min: val }));
+                }}
               />
               <span>-</span>
               <input
                 type="number"
                 placeholder="Max"
-                value={maxPrice}
-                onChange={(e) => handleParamChange("maxPrice", e.target.value)}
+                value={priceRange.max}
+                onChange={(e) => {
+                  const val = e.target.value === "" ? 2000 : Number(e.target.value);
+                  setPriceRange(prev => ({ ...prev, max: val }));
+                }}
               />
             </div>
             <input
               type="range"
               min="0"
               max="2000"
-              value={maxPrice}
-              onChange={(e) => handleParamChange("maxPrice", e.target.value)}
+              value={priceRange.max}
+              onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) }))}
             />
           </div>
           <button
             className="btn btn-primary full-width"
             onClick={() => {
               setSearchParams({});
+              setPriceRange({ min: 0, max: 2000 });
               setShowMobileFilters(false);
             }}
           >
@@ -282,7 +311,7 @@ const Shop = () => {
         </aside>
         <div className="shop-content">
           <div className="products-grid grid">
-            {loading ? (
+            {productsLoading ? (
               Array(8)
                 .fill(0)
                 .map((_, i) => <SkeletonCard key={i} />)
@@ -292,8 +321,8 @@ const Shop = () => {
               ))
             ) : null}
           </div>
-          {!loading && filteredProducts.length === 0 && (
-            <div className="empty-state" style={{ margin: "0rem auto" }}>
+          {!productsLoading && filteredProducts.length === 0 && (
+            <div className="empty-state">
               <div className="empty-icon-wrapper">
                 <FaSearch size={40} style={{ color: "var(--primary)" }} />
               </div>
@@ -301,8 +330,10 @@ const Shop = () => {
               <p>We couldn't find any products matching your search or filters.</p>
               <button
                 className="btn btn-primary"
-                onClick={() => setSearchParams({})}
-                style={{ marginTop: "0rem" }}
+                onClick={() => {
+                  setSearchParams({});
+                  setPriceRange({ min: 0, max: 2000 });
+                }}
               >
                 Reset All Filters
               </button>

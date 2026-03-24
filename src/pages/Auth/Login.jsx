@@ -1,70 +1,70 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { login } from "../../redux/slices/authSlice";
+import toast from "react-hot-toast";
 import "../../styles/Auth.css";
+
 const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const validate = () => {
-    const newErrors = {};
-    if (!formData.email) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Email is invalid";
-    if (!formData.password) newErrors.password = "Password is required";
-    else if (formData.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
-    return newErrors;
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length === 0) {
+
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
       dispatch(
         login({
-          email: formData.email,
-          username: formData.email.split("@")[0],
+          email: values.email,
+          username: values.email.split("@")[0],
         }),
       );
+      toast.success("Login successful");
       navigate("/");
-    } else {
-      setErrors(validationErrors);
-    }
-  };
+    },
+  });
   return (
     <div className="auth-page">
       <div className="auth-card">
         <h2>Welcome Back</h2>
         <p>Login to your account to continue shopping</p>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={formik.handleSubmit}>
           <div className="form-group">
             <label>Email Address</label>
             <input
               type="email"
               placeholder="Enter your email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              className={errors.email ? "error" : ""}
+              {...formik.getFieldProps("email")}
+              className={formik.touched.email && formik.errors.email ? "error" : ""}
             />
-            {errors.email && <span className="error-text">{errors.email}</span>}
+            {formik.touched.email && formik.errors.email && (
+              <span className="error-text">{formik.errors.email}</span>
+            )}
           </div>
           <div className="form-group">
             <label>Password</label>
             <input
               type="password"
               placeholder="Enter your password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              className={errors.password ? "error" : ""}
+              {...formik.getFieldProps("password")}
+              className={formik.touched.password && formik.errors.password ? "error" : ""}
             />
-            {errors.password && (
-              <span className="error-text">{errors.password}</span>
+            {formik.touched.password && formik.errors.password && (
+              <span className="error-text">{formik.errors.password}</span>
             )}
           </div>
           <button type="submit" className="btn btn-primary full-width">

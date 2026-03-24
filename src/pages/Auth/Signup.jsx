@@ -1,61 +1,62 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { signup } from "../../redux/slices/authSlice";
+import toast from "react-hot-toast";
 import "../../styles/Auth.css";
+
 const Signup = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const validate = () => {
-    const newErrors = {};
-    if (!formData.username) newErrors.username = "Username is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Email is invalid";
-    if (!formData.password) newErrors.password = "Password is required";
-    else if (formData.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
-    if (formData.password !== formData.confirmPassword)
-      newErrors.confirmPassword = "Passwords do not match";
-    return newErrors;
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length === 0) {
-      dispatch(signup({ email: formData.email, username: formData.username }));
+
+  const validationSchema = Yup.object({
+    username: Yup.string()
+      .min(3, "Username must be at least 3 characters")
+      .required("Username is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .required("Confirm Password is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      dispatch(signup({ email: values.email, username: values.username }));
+      toast.success("Account created successfully!");
       navigate("/");
-    } else {
-      setErrors(validationErrors);
-    }
-  };
+    },
+  });
   return (
     <div className="auth-page">
       <div className="auth-card">
         <h2>Create Account</h2>
         <p>Join us for the best shopping experience</p>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={formik.handleSubmit}>
           <div className="form-row">
             <div className="form-group">
               <label>Username</label>
               <input
                 type="text"
                 placeholder="Enter username"
-                value={formData.username}
-                onChange={(e) =>
-                  setFormData({ ...formData, username: e.target.value })
-                }
-                className={errors.username ? "error" : ""}
+                {...formik.getFieldProps("username")}
+                className={formik.touched.username && formik.errors.username ? "error" : ""}
               />
-              {errors.username && (
-                <span className="error-text">{errors.username}</span>
+              {formik.touched.username && formik.errors.username && (
+                <span className="error-text">{formik.errors.username}</span>
               )}
             </div>
             <div className="form-group">
@@ -63,14 +64,11 @@ const Signup = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className={errors.email ? "error" : ""}
+                {...formik.getFieldProps("email")}
+                className={formik.touched.email && formik.errors.email ? "error" : ""}
               />
-              {errors.email && (
-                <span className="error-text">{errors.email}</span>
+              {formik.touched.email && formik.errors.email && (
+                <span className="error-text">{formik.errors.email}</span>
               )}
             </div>
           </div>
@@ -80,14 +78,11 @@ const Signup = () => {
               <input
                 type="password"
                 placeholder="Enter your password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                className={errors.password ? "error" : ""}
+                {...formik.getFieldProps("password")}
+                className={formik.touched.password && formik.errors.password ? "error" : ""}
               />
-              {errors.password && (
-                <span className="error-text">{errors.password}</span>
+              {formik.touched.password && formik.errors.password && (
+                <span className="error-text">{formik.errors.password}</span>
               )}
             </div>
             <div className="form-group">
@@ -95,14 +90,11 @@ const Signup = () => {
               <input
                 type="password"
                 placeholder="Confirm your password"
-                value={formData.confirmPassword}
-                onChange={(e) =>
-                  setFormData({ ...formData, confirmPassword: e.target.value })
-                }
-                className={errors.confirmPassword ? "error" : ""}
+                {...formik.getFieldProps("confirmPassword")}
+                className={formik.touched.confirmPassword && formik.errors.confirmPassword ? "error" : ""}
               />
-              {errors.confirmPassword && (
-                <span className="error-text">{errors.confirmPassword}</span>
+              {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                <span className="error-text">{formik.errors.confirmPassword}</span>
               )}
             </div>
           </div>

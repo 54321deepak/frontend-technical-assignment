@@ -34,7 +34,7 @@ const Wishlist = () => {
               product={product}
               onRemove={(id) => {
                 dispatch(removeFromWishlist(id));
-                toast.error(`Removed from Wishlist — ${product.title}`);
+                toast.error("Removed from Wishlist");
               }}
             />
           </div>

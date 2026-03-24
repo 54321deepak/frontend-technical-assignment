@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { FaTimes, FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash } from "react-icons/fa";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { login, signup } from "../../redux/slices/authSlice";
 import authImage from "../../assets/auth/auth_lifestyle.png";
 import toast from "react-hot-toast";
 import "../../styles/Auth.css";
+
 const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
   const [mode, setMode] = useState(initialMode);
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add("modal-open");
@@ -26,49 +23,50 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
       document.body.classList.remove("modal-open");
     };
   }, [isOpen]);
-  useEffect(() => {
-    setMode(initialMode);
-    setErrors({});
-    setFormData({ username: "", email: "", password: "", confirmPassword: "" });
-  }, [initialMode, isOpen]);
-  if (!isOpen) return null;
-  const validate = () => {
-    const newErrors = {};
-    if (mode === "signup" && !formData.username)
-      newErrors.username = "Username is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Email is invalid";
-    if (!formData.password) newErrors.password = "Password is required";
-    else if (formData.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
-    if (mode === "signup" && formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-    return newErrors;
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length === 0) {
+
+  const validationSchema = Yup.object({
+    username: mode === "signup" 
+      ? Yup.string().min(3, "Username must be at least 3 characters").required("Username is required")
+      : Yup.string(),
+    email: Yup.string().email("Invalid email address").required("Email is required"),
+    password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+    confirmPassword: mode === "signup"
+      ? Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match").required("Confirm Password is required")
+      : Yup.string(),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: validationSchema,
+    enableReinitialize: true,
+    onSubmit: (values) => {
       if (mode === "login") {
-        const username = formData.email.split("@")[0];
-        dispatch(login({ email: formData.email, username }));
-        toast.success(`Welcome back, ${username}!`);
+        const username = values.email.split("@")[0];
+        dispatch(login({ email: values.email, username }));
+        toast.success("Login successful");
       } else {
-        dispatch(
-          signup({ email: formData.email, username: formData.username }),
-        );
-        toast.success(`Account created! Welcome, ${formData.username}!`);
+        dispatch(signup({ email: values.email, username: values.username }));
+        toast.success("Account created successfully!");
       }
       onClose();
-    } else {
-      setErrors(validationErrors);
-    }
-  };
+    },
+  });
+
+  useEffect(() => {
+    setMode(initialMode);
+    formik.resetForm();
+  }, [initialMode, isOpen]);
+
+  if (!isOpen) return null;
+
   const toggleMode = () => {
     setMode(mode === "login" ? "signup" : "login");
-    setErrors({});
+    formik.resetForm();
   };
   const handleOverlayClick = (e) => {
     if (e.target.className === "auth-modal-overlay") {
@@ -97,7 +95,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                 : "Join us for a premium shopping experience"}
             </p>
           </div>
-          <form onSubmit={handleSubmit} className="auth-modal-form">
+          <form onSubmit={formik.handleSubmit} className="auth-modal-form">
             {mode === "signup" ? (
               <>
                 <div className="form-row">
@@ -108,14 +106,11 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                     <input
                       type="text"
                       placeholder="Enter username"
-                      value={formData.username}
-                      onChange={(e) =>
-                        setFormData({ ...formData, username: e.target.value })
-                      }
-                      className={errors.username ? "error" : ""}
+                      {...formik.getFieldProps("username")}
+                      className={formik.touched.username && formik.errors.username ? "error" : ""}
                     />
-                    {errors.username && (
-                      <span className="error-text">{errors.username}</span>
+                    {formik.touched.username && formik.errors.username && (
+                      <span className="error-text">{formik.errors.username}</span>
                     )}
                   </div>
                   <div className="form-group">
@@ -125,14 +120,11 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                     <input
                       type="email"
                       placeholder="Enter email"
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                      className={errors.email ? "error" : ""}
+                      {...formik.getFieldProps("email")}
+                      className={formik.touched.email && formik.errors.email ? "error" : ""}
                     />
-                    {errors.email && (
-                      <span className="error-text">{errors.email}</span>
+                    {formik.touched.email && formik.errors.email && (
+                      <span className="error-text">{formik.errors.email}</span>
                     )}
                   </div>
                 </div>
@@ -145,11 +137,8 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                       <input
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter password"
-                        value={formData.password}
-                        onChange={(e) =>
-                          setFormData({ ...formData, password: e.target.value })
-                        }
-                        className={errors.password ? "error" : ""}
+                        {...formik.getFieldProps("password")}
+                        className={formik.touched.password && formik.errors.password ? "error" : ""}
                         style={{ paddingRight: "2.5rem" }}
                       />
                       <button
@@ -171,8 +160,8 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                         {showPassword ? <FaEyeSlash /> : <FaEye />}
                       </button>
                     </div>
-                    {errors.password && (
-                      <span className="error-text">{errors.password}</span>
+                    {formik.touched.password && formik.errors.password && (
+                      <span className="error-text">{formik.errors.password}</span>
                     )}
                   </div>
                   <div className="form-group">
@@ -183,14 +172,8 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                       <input
                         type={showPassword ? "text" : "password"}
                         placeholder="Confirm password"
-                        value={formData.confirmPassword}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            confirmPassword: e.target.value,
-                          })
-                        }
-                        className={errors.confirmPassword ? "error" : ""}
+                        {...formik.getFieldProps("confirmPassword")}
+                        className={formik.touched.confirmPassword && formik.errors.confirmPassword ? "error" : ""}
                         style={{ paddingRight: "2.5rem" }}
                       />
                       <button
@@ -212,9 +195,9 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                         {showPassword ? <FaEyeSlash /> : <FaEye />}
                       </button>
                     </div>
-                    {errors.confirmPassword && (
+                    {formik.touched.confirmPassword && formik.errors.confirmPassword && (
                       <span className="error-text">
-                        {errors.confirmPassword}
+                        {formik.errors.confirmPassword}
                       </span>
                     )}
                   </div>
@@ -229,14 +212,11 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                   <input
                     type="email"
                     placeholder="Enter email"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    className={errors.email ? "error" : ""}
+                    {...formik.getFieldProps("email")}
+                    className={formik.touched.email && formik.errors.email ? "error" : ""}
                   />
-                  {errors.email && (
-                    <span className="error-text">{errors.email}</span>
+                  {formik.touched.email && formik.errors.email && (
+                    <span className="error-text">{formik.errors.email}</span>
                   )}
                 </div>
                 <div className="form-group">
@@ -247,11 +227,8 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                     <input
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter password"
-                      value={formData.password}
-                      onChange={(e) =>
-                        setFormData({ ...formData, password: e.target.value })
-                      }
-                      className={errors.password ? "error" : ""}
+                      {...formik.getFieldProps("password")}
+                      className={formik.touched.password && formik.errors.password ? "error" : ""}
                       style={{ paddingRight: "2.5rem" }}
                     />
                     <button
@@ -273,8 +250,8 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
                   </div>
-                  {errors.password && (
-                    <span className="error-text">{errors.password}</span>
+                  {formik.touched.password && formik.errors.password && (
+                    <span className="error-text">{formik.errors.password}</span>
                   )}
                 </div>
               </>

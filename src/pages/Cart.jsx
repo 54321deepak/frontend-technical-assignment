@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaTrash,
   FaPlus,
@@ -14,9 +14,15 @@ import {
   clearCart,
 } from "../redux/slices/cartSlice";
 import toast from "react-hot-toast";
+import OrderSuccessModal from "../components/cart/OrderSuccessModal";
 import "../styles/Cart.css";
+
 const Cart = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [showSuccess, setShowSuccess] = React.useState(false);
+  const [orderDetails, setOrderDetails] = React.useState({ id: "", total: 0 });
+
   const { items } = useSelector((state) => state.cart);
   const subtotal = items.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -24,22 +30,43 @@ const Cart = () => {
   );
   const shipping = items.length > 0 ? 10 : 0;
   const total = subtotal + shipping;
+
   const handleUpdateQuantity = (id, quantity) => {
     if (quantity > 0) {
       dispatch(updateQuantity({ id, quantity }));
     }
   };
+
   const handleRemove = (id, title) => {
     dispatch(removeFromCart(id));
     toast.error(`${title} removed from cart`);
   };
+
   const handleClear = () => {
     dispatch(clearCart());
     toast.error("Cart cleared");
   };
+
   const handleCheckout = () => {
-    toast.success("Redirecting to secure checkout...");
+    const newOrderId = Math.floor(100000 + Math.random() * 900000);
+    setOrderDetails({ id: newOrderId.toString(), total: total });
+    setShowSuccess(true);
+    dispatch(clearCart());
   };
+
+  const handleCloseModal = () => {
+    setShowSuccess(false);
+  };
+  if (showSuccess) {
+    return (
+      <OrderSuccessModal
+        isOpen={showSuccess}
+        onClose={handleCloseModal}
+        orderDetails={orderDetails}
+      />
+    );
+  }
+
   if (items.length === 0) {
     return (
       <div className="container empty-state">
@@ -175,6 +202,11 @@ const Cart = () => {
           </p>
         </div>
       </div>
+      <OrderSuccessModal 
+        isOpen={showSuccess} 
+        onClose={handleCloseModal} 
+        orderDetails={orderDetails} 
+      />
     </div>
   );
 };

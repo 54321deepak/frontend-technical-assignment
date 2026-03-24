@@ -11,6 +11,7 @@ import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
 import Wishlist from "./pages/Wishlist";
 import { Toaster } from "react-hot-toast";
+import ScrollToTop from "./components/layout/ScrollToTop";
 function App() {
   const isDarkMode = useSelector((state) => state.theme.isDarkMode);
   useEffect(() => {
@@ -24,11 +25,12 @@ function App() {
   }, [isDarkMode]);
   return (
     <Router>
+      <ScrollToTop />
       <div className="app-container">
         <Toaster
           position="top-right"
           toastOptions={{
-            duration: 3000,
+            duration: 800,
             style: {
               background: isDarkMode ? "#1e293b" : "#ffffff",
               color: isDarkMode ? "#f8fafc" : "#0f172a",

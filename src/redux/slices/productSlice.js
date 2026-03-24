@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   products: [],
   categories: [],
-  loading: false,
+  productsLoading: false,
+  categoriesLoading: false,
+  loading: false, // Keeping for backward compatibility if used elsewhere
   error: null,
   total: 0,
 };
@@ -11,26 +13,29 @@ const productSlice = createSlice({
   initialState,
   reducers: {
     fetchProductsRequest: (state) => {
+      state.productsLoading = true;
       state.loading = true;
     },
     fetchProductsSuccess: (state, action) => {
+      state.productsLoading = false;
       state.loading = false;
       state.products = action.payload.products;
       state.total = action.payload.total;
     },
     fetchProductsFailure: (state, action) => {
+      state.productsLoading = false;
       state.loading = false;
       state.error = action.payload;
     },
     fetchCategoriesRequest: (state) => {
-      state.loading = true;
+      state.categoriesLoading = true;
     },
     fetchCategoriesSuccess: (state, action) => {
-      state.loading = false;
+      state.categoriesLoading = false;
       state.categories = action.payload;
     },
     fetchCategoriesFailure: (state, action) => {
-      state.loading = false;
+      state.categoriesLoading = false;
       state.error = action.payload;
     },
   },
