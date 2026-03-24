@@ -354,3 +354,66 @@ body.dark .search-bar {
     gap: 0.25rem;
   }
 }
+
+.login-btn-header {
+  padding: 0.5rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.login-btn-header .login-icon {
+  display: none;
+}
+
+@media (max-width: 576px) {
+  .logo-text {
+    display: none;
+  }
+  
+  .login-btn-header {
+    padding: 0 !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: var(--radius-full) !important;
+    justify-content: center;
+    background: transparent !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-main) !important;
+  }
+  
+  .login-btn-header:hover {
+    background: var(--bg-app) !important;
+    color: var(--primary) !important;
+    border-color: var(--primary) !important;
+  }
+  
+  .login-btn-header .login-text {
+    display: none;
+  }
+  
+  .login-btn-header .login-icon {
+    display: block;
+    font-size: 0.9rem;
+  }
+  
+  .user-profile-btn {
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    justify-content: center;
+    border-radius: var(--radius-full);
+  }
+  
+  .user-profile-btn svg {
+    margin: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-btn-header,
+  .user-profile-btn {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}

@@ -49,7 +49,7 @@ const Header = () => {
       <div className="container header-container">
         <Link to="/" className="logo">
           <img src="/favicon.svg" alt="ShopNow Logo" className="logo-img" />
-          <span>Shop</span>Now
+          <span className="logo-text"><span>Shop</span>Now</span>
         </Link>
         <nav className={`nav-menu ${isMenuOpen ? "active" : ""}`}>
           <ul className="nav-links">
@@ -119,10 +119,10 @@ const Header = () => {
           ) : (
             <button
               onClick={() => openAuthModal("login")}
-              className="btn btn-primary"
-              style={{ padding: "0.5rem 1.25rem" }}
+              className="btn btn-primary login-btn-header"
             >
-              Login
+              <span className="login-text">Login</span>
+              <FaUser className="login-icon" />
             </button>
           )}
           <button

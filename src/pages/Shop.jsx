@@ -115,45 +115,18 @@ const Shop = () => {
               e.preventDefault();
               handleParamChange("q", searchTerm);
             }}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              background: "var(--bg-app)",
-              borderRadius: "var(--radius-full)",
-              padding: "0.4rem 1rem",
-              border: "1px solid var(--border-color)",
-              width: "250px",
-              height: "45px"
-            }}
           >
-            <button
-              type="submit"
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                padding: "0",
-                marginRight: "0.5rem"
-              }}
-            >
+            <button type="submit" className="search-btn">
               <FaSearch style={{ color: "var(--text-muted)" }} />
             </button>
             <input
               type="text"
               placeholder="Search products..."
               value={searchTerm}
+              className="search-input"
               onChange={(e) => {
                 setSearchTerm(e.target.value);
                 handleParamChange("q", e.target.value);
-              }}
-              style={{
-                border: "none",
-                background: "transparent",
-                outline: "none",
-                width: "100%",
-                fontSize: "0.9rem",
               }}
             />
             {searchTerm && (
@@ -164,25 +137,17 @@ const Shop = () => {
                   setSearchTerm("");
                   handleParamChange("q", "");
                 }}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "var(--text-muted)",
-                  display: "flex",
-                  alignItems: "center",
-                }}
               >
                 <FaTimes />
               </button>
             )}
           </form>
-          {/* <button
+          <button
             className="mobile-filter-btn btn btn-outline"
             onClick={() => setShowMobileFilters(true)}
           >
             <FaFilter /> Filters
-          </button> */}
+          </button>
           <div
             className="custom-sort-dropdown"
             tabIndex={0}
@@ -223,6 +188,9 @@ const Shop = () => {
         </div>
       </div>
       <div className="shop-layout">
+        {showMobileFilters && (
+          <div className="overlay" onClick={() => setShowMobileFilters(false)}></div>
+        )}
         <aside className={`shop-sidebar ${showMobileFilters ? "active" : ""}`}>
           <div className="sidebar-header">
             <h3>Filters</h3>
