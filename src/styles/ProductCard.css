@@ -142,3 +142,9 @@ body.dark .image-container {
   align-items: center;
   gap: 0.25rem;
 }
+
+@media (max-width: 1024px) {
+  .card-actions {
+    right: 1.25rem;
+  }
+}

@@ -124,11 +124,11 @@ const Home = () => {
           >
             {loading
               ? Array(8)
-                  .fill(0)
-                  .map((_, i) => <SkeletonCard key={i} />)
+                .fill(0)
+                .map((_, i) => <SkeletonCard key={i} />)
               : featuredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+                <ProductCard key={product.id} product={product} />
+              ))}
           </div>
         </div>
       </section>

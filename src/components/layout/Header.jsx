@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -23,6 +23,7 @@ const Header = () => {
   const [authMode, setAuthMode] = useState("login");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const userMenuRef = useRef(null);
   const { items: cartItems } = useSelector((state) => state.cart);
   const { items: wishlistItems } = useSelector((state) => state.wishlist);
   const { isDarkMode } = useSelector((state) => state.theme);
@@ -44,6 +45,20 @@ const Header = () => {
   const toggleUserMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <header className="header">
       <div className="container header-container">
@@ -78,23 +93,23 @@ const Header = () => {
         <div className="header-actions">
           <button
             className="action-btn-circle"
-            onClick={() => dispatch(toggleDarkMode())}
+            onClick={() => { dispatch(toggleDarkMode()); setIsMenuOpen(false); }}
           >
             {isDarkMode ? <FaSun /> : <FaMoon />}
           </button>
-          <Link to="/wishlist" className="action-btn-circle">
+          <Link to="/wishlist" className="action-btn-circle" onClick={() => setIsMenuOpen(false)}>
             <FaHeart />
             {wishlistCount > 0 && (
               <span className="badge">{wishlistCount}</span>
             )}
           </Link>
-          <Link to="/cart" className="action-btn-circle">
+          <Link to="/cart" className="action-btn-circle" onClick={() => setIsMenuOpen(false)}>
             <FaShoppingCart />
             {cartCount > 0 && <span className="badge">{cartCount}</span>}
           </Link>
           {isAuthenticated ? (
-            <div className="user-menu-container">
-              <button className="user-profile-btn" onClick={toggleUserMenu}>
+            <div className="user-menu-container" ref={userMenuRef}>
+              <button className="user-profile-btn" onClick={() => { toggleUserMenu(); setIsMenuOpen(false); }}>
                 <FaUser />
                 <span className="user-name">{user?.username || "Profile"}</span>
               </button>

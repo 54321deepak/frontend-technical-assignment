@@ -39,7 +39,7 @@ const Cart = () => {
 
   const handleRemove = (id, title) => {
     dispatch(removeFromCart(id));
-    toast.error(`${title} removed from cart`);
+    toast.error("Removed from Cart");
   };
 
   const handleClear = () => {
