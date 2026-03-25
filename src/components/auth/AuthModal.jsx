@@ -199,7 +199,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
               )}
             </div>
 
-            <Button type="submit" fullWidth className="signup-submit-btn">
+            <Button type="submit" fullWidth size="xl" className="signup-submit-btn">
               {mode === "login" ? "Login" : "Sign Up"}
             </Button>
           </form>
