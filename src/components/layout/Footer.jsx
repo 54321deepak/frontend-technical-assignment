@@ -17,7 +17,8 @@ const Footer = () => {
       <div className="container footer-container">
         <div className="footer-section about">
           <Link to="/" className="logo">
-            <span>Shop</span>Now
+            <img src="/favicon.svg" alt="ShopNow Logo" className="logo-img" />
+            <span className="logo-text"><span>Shop</span>Now</span>
           </Link>
           <p>
             Your ultimate destination for curated products and seamless

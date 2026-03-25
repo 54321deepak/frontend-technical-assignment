@@ -151,11 +151,11 @@ const ProductDetails = () => {
                     <div className="action-buttons">
                         {isInCart ? (
                             <div className="quantity-selector">
-                                <label>Quantity</label>
                                 <QuantitySelector
                                     quantity={cartItem.quantity}
                                     onIncrease={handleIncrease}
                                     onDecrease={handleDecrease}
+                                    className="full-width"
                                 />
                             </div>
                         ) : (

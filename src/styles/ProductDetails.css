@@ -191,10 +191,11 @@
 
 .action-buttons {
   display: flex;
+  align-items: flex-end;
   gap: 1rem;
 }
 
-.action-buttons button {
+.action-buttons .btn {
   flex: 1;
   padding: 1rem 1.5rem;
   font-size: 1rem;
@@ -213,9 +214,7 @@
 
 /* Removed redundant detail-quantity-selector styles - now handled by QuantitySelector common component */
 .quantity-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  flex: 1;
 }
 
 .quantity-selector label {
@@ -309,7 +308,7 @@
     flex-direction: column;
   }
 
-  .action-buttons button {
+  .action-buttons .btn {
     width: 100%;
   }
 }

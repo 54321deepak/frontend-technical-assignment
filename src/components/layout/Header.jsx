@@ -29,7 +29,7 @@ const Header = () => {
   const { items: wishlistItems } = useSelector((state) => state.wishlist);
   const { isDarkMode } = useSelector((state) => state.theme);
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const cartCount = cartItems.length;
   const wishlistCount = wishlistItems.length;
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const openAuthModal = (mode = "login") => {

@@ -15,23 +15,7 @@
   height: 100%;
   gap: 2rem;
 }
-.logo {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  letter-spacing: -0.04em;
-  gap: 0.5rem;
-}
-.logo-img {
-  height: 32px;
-  width: auto;
-  flex-shrink: 0;
-}
-.logo span {
-  color: var(--text-main);
-}
+/* Logo styles moved to global.css */
 .nav-menu {
   flex: 1;
   display: flex;
