@@ -15,6 +15,7 @@ import { toggleDarkMode } from "../../redux/slices/themeSlice";
 import { logout } from "../../redux/slices/authSlice";
 import AuthModal from "../auth/AuthModal";
 import toast from "react-hot-toast";
+import Button from "../common/Button";
 import "../../styles/Header.css";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -132,13 +133,13 @@ const Header = () => {
               )}
             </div>
           ) : (
-            <button
+            <Button
               onClick={() => openAuthModal("login")}
-              className="btn btn-primary login-btn-header"
+              className="login-btn-header"
             >
               <span className="login-text">Login</span>
               <FaUser className="login-icon" />
-            </button>
+            </Button>
           )}
           <button
             className="menu-toggle"

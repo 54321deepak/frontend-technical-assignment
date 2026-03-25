@@ -9,6 +9,7 @@ import {
   FaPhoneAlt,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+import Heading from "../common/Heading";
 import "../../styles/Footer.css";
 const Footer = () => {
   return (
@@ -38,7 +39,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="footer-section links">
-          <h3>Quick Links</h3>
+          <Heading level={3}>Quick Links</Heading>
           <ul>
             <li>
               <Link to="/">Home</Link>
@@ -55,7 +56,7 @@ const Footer = () => {
           </ul>
         </div>
         <div className="footer-section links">
-          <h3>Customer Service</h3>
+          <Heading level={3}>Customer Service</Heading>
           <ul>
             <li>
               <Link to="#">About Us</Link>
@@ -72,7 +73,7 @@ const Footer = () => {
           </ul>
         </div>
         <div className="footer-section contact">
-          <h3>Contact Us</h3>
+          <Heading level={3}>Contact Us</Heading>
           <div className="contact-info">
             <p>
               <FaEnvelope className="contact-icon" /> support@e-shop.com

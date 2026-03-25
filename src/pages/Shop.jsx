@@ -7,6 +7,7 @@ import {
 } from "../redux/slices/productSlice";
 import ProductCard from "../components/product/ProductCard";
 import SkeletonCard from "../components/product/SkeletonCard";
+import ShopSidebar from "../components/shop/ShopSidebar";
 import {
   FaFilter,
   FaSortAmountDown,
@@ -15,6 +16,10 @@ import {
   FaTimes,
   FaSearch,
 } from "react-icons/fa";
+import Heading from "../components/common/Heading";
+import Button from "../components/common/Button";
+import InputField from "../components/common/InputField";
+import EmptyState from "../components/common/EmptyState";
 import "../styles/Shop.css";
 const Shop = () => {
   const dispatch = useDispatch();
@@ -23,11 +28,11 @@ const Shop = () => {
     useSelector((state) => state.products);
   const query = searchParams.get("q") || "";
   const category = searchParams.get("category") || "all";
-  const minPrice = searchParams.get("minPrice") !== null 
-    ? Number(searchParams.get("minPrice")) 
+  const minPrice = searchParams.get("minPrice") !== null
+    ? Number(searchParams.get("minPrice"))
     : 0;
-  const maxPrice = searchParams.get("maxPrice") !== null 
-    ? Number(searchParams.get("maxPrice")) 
+  const maxPrice = searchParams.get("maxPrice") !== null
+    ? Number(searchParams.get("maxPrice"))
     : 2000;
   const sortBy = searchParams.get("sortBy") || "default";
   const page = Number(searchParams.get("page")) || 1;
@@ -95,15 +100,10 @@ const Shop = () => {
     <div className="shop-page container">
       <div className="shop-header">
         <div className="shop-info">
-          <h1 style={{ textTransform: "capitalize" }}>
+          <Heading level={1} className="shop-title">
             {category !== "all" ? category.replace("-", " ") : "All Products"}
-            {query && (
-              <span style={{ fontSize: "0.7em", color: "var(--text-muted)" }}>
 
-
-              </span>
-            )}
-          </h1>
+          </Heading>
           <p>
             Showing {filteredProducts.length} of {total} products
           </p>
@@ -117,9 +117,10 @@ const Shop = () => {
             }}
           >
             <button type="submit" className="search-btn">
-              <FaSearch style={{ color: "var(--text-muted)" }} />
+              <FaSearch className="search-icon-muted" />
             </button>
-            <input
+            <InputField
+              variant="plain"
               type="text"
               placeholder="Search products..."
               value={searchTerm}
@@ -142,12 +143,13 @@ const Shop = () => {
               </button>
             )}
           </form>
-          <button
-            className="mobile-filter-btn btn btn-outline"
+          <Button
+            variant="outline"
+            className="mobile-filter-btn"
             onClick={() => setShowMobileFilters(true)}
           >
             <FaFilter /> Filters
-          </button>
+          </Button>
           <div
             className="custom-sort-dropdown"
             tabIndex={0}
@@ -191,92 +193,17 @@ const Shop = () => {
         {showMobileFilters && (
           <div className="overlay" onClick={() => setShowMobileFilters(false)}></div>
         )}
-        <aside className={`shop-sidebar ${showMobileFilters ? "active" : ""}`}>
-          <div className="sidebar-header">
-            <h3>Filters</h3>
-            <button
-              className="close-filters"
-              onClick={() => setShowMobileFilters(false)}
-            >
-              <FaTimes />
-            </button>
-          </div>
-          <div className="filter-group">
-            <h4>Categories</h4>
-            <ul className="category-list">
-              <li
-                className={category === "all" ? "active" : ""}
-                onClick={() => handleParamChange("category", "all")}
-              >
-                All Categories
-              </li>
-              {categoriesLoading ? (
-                Array(10)
-                  .fill(0)
-                  .map((_, i) => (
-                    <li key={`skeleton-${i}`} className="skeleton-item">
-                      <div className="skeleton-text"></div>
-                    </li>
-                  ))
-              ) : (
-                categories.map((cat, idx) => {
-                  const catSlug = typeof cat === "string" ? cat : cat.slug;
-                  const catName = typeof cat === "string" ? cat : cat.name;
-                  return (
-                    <li
-                      key={idx}
-                      className={category === catSlug ? "active" : ""}
-                      onClick={() => handleParamChange("category", catSlug)}
-                    >
-                      {catName}
-                    </li>
-                  );
-                })
-              )}
-            </ul>
-          </div>
-          <div className="filter-group">
-            <h4>Price Range</h4>
-            <div className="price-inputs">
-              <input
-                type="number"
-                placeholder="Min"
-                value={priceRange.min}
-                onChange={(e) => {
-                  const val = e.target.value === "" ? 0 : Number(e.target.value);
-                  setPriceRange(prev => ({ ...prev, min: val }));
-                }}
-              />
-              <span>-</span>
-              <input
-                type="number"
-                placeholder="Max"
-                value={priceRange.max}
-                onChange={(e) => {
-                  const val = e.target.value === "" ? 2000 : Number(e.target.value);
-                  setPriceRange(prev => ({ ...prev, max: val }));
-                }}
-              />
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="2000"
-              value={priceRange.max}
-              onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) }))}
-            />
-          </div>
-          <button
-            className="btn btn-primary full-width"
-            onClick={() => {
-              setSearchParams({});
-              setPriceRange({ min: 0, max: 2000 });
-              setShowMobileFilters(false);
-            }}
-          >
-            Clear All Filters
-          </button>
-        </aside>
+        <ShopSidebar
+          showMobileFilters={showMobileFilters}
+          setShowMobileFilters={setShowMobileFilters}
+          category={category}
+          categories={categories}
+          categoriesLoading={categoriesLoading}
+          handleParamChange={handleParamChange}
+          priceRange={priceRange}
+          setPriceRange={setPriceRange}
+          setSearchParams={setSearchParams}
+        />
         <div className="shop-content">
           <div className="products-grid grid">
             {productsLoading ? (
@@ -290,22 +217,16 @@ const Shop = () => {
             ) : null}
           </div>
           {!productsLoading && filteredProducts.length === 0 && (
-            <div className="empty-state">
-              <div className="empty-icon-wrapper">
-                <FaSearch size={40} style={{ color: "var(--primary)" }} />
-              </div>
-              <h2>No Products Found</h2>
-              <p>We couldn't find any products matching your search or filters.</p>
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  setSearchParams({});
-                  setPriceRange({ min: 0, max: 2000 });
-                }}
-              >
-                Reset All Filters
-              </button>
-            </div>
+            <EmptyState
+              icon={FaSearch}
+              title="No Products Found"
+              message="We couldn't find any products matching your search or filters."
+              actionText="Reset All Filters"
+              onAction={() => {
+                setSearchParams({});
+                setPriceRange({ min: 0, max: 2000 });
+              }}
+            />
           )}
           {totalPages > 1 && (
             <div className="pagination">

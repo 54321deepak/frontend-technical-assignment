@@ -49,35 +49,7 @@
   font-size: 0.9rem;
 }
 
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: var(--bg-app);
-  padding: 0.5rem;
-  border-radius: var(--radius-full);
-  width: fit-content;
-}
-
-.qty-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-card);
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.qty-btn:hover {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-}
+/* Redundant quantity styles removed - handled by common component */
 
 .item-price-total {
   font-weight: 800;

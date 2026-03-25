@@ -5,6 +5,9 @@ import { FaHeart, FaTrash, FaShoppingCart } from "react-icons/fa";
 import { removeFromWishlist } from "../redux/slices/wishlistSlice";
 import { addToCart } from "../redux/slices/cartSlice";
 import ProductCard from "../components/product/ProductCard";
+import Heading from "../components/common/Heading";
+import EmptyState from "../components/common/EmptyState";
+import { FaHeartBroken } from "react-icons/fa";
 import toast from "react-hot-toast";
 import "../styles/Wishlist.css";
 const Wishlist = () => {
@@ -12,21 +15,18 @@ const Wishlist = () => {
   const { items } = useSelector((state) => state.wishlist);
   if (items.length === 0) {
     return (
-      <div className="container empty-state">
-        <div className="empty-icon-wrapper">
-          <FaHeart size={50} color="var(--primary)" />
-        </div>
-        <h2>Your Wishlist is Empty</h2>
-        <p>Save items you like to find them easily later.</p>
-        <Link to="/shop" className="btn btn-primary">
-          Go to Shop
-        </Link>
-      </div>
+      <EmptyState
+        icon={FaHeart}
+        title="Your Wishlist is Empty"
+        message="Save items you like to find them easily later."
+        actionText="Go to Shop"
+        actionLink="/shop"
+      />
     );
   }
   return (
     <div className="wishlist-page container">
-      <h1 className="page-title">My Wishlist</h1>
+      <Heading level={1} align="center">My Wishlist</Heading>
       <div className="products-grid grid">
         {items.map((product) => (
           <div key={product.id} className="wishlist-item-wrapper">

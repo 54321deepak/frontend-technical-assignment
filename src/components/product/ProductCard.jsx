@@ -5,6 +5,7 @@ import { FaShoppingCart, FaHeart, FaEye, FaTrash } from "react-icons/fa";
 import { addToCart, removeFromCart } from "../../redux/slices/cartSlice";
 import { toggleWishlist } from "../../redux/slices/wishlistSlice";
 import toast from "react-hot-toast";
+import Heading from "../common/Heading";
 import "../../styles/ProductCard.css";
 const ProductCard = ({ product, onRemove }) => {
   const dispatch = useDispatch();
@@ -69,7 +70,7 @@ const ProductCard = ({ product, onRemove }) => {
       </div>
       <Link to={`/product/${product.id}`} className="product-info">
         <span className="category">{product.category}</span>
-        <h3 className="title">{product.title}</h3>
+        <Heading level={3} className="title">{product.title}</Heading>
         <div className="price-rating">
           <span className="price">${product.price}</span>
           <span className="rating">★ {product.rating}</span>

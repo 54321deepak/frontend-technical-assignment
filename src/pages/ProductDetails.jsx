@@ -10,6 +10,10 @@ import { toggleWishlist } from "../redux/slices/wishlistSlice";
 import { getProductById } from "../services/api";
 import toast from "react-hot-toast";
 import SkeletonCard from "../components/product/SkeletonCard";
+import Button from "../components/common/Button";
+import PromoCard from "../components/common/PromoCard";
+import QuantitySelector from "../components/common/QuantitySelector";
+import { ProductDetailsSkeleton } from "../components/common/ProjectSkeletons";
 import {
     FaShoppingCart,
     FaHeart,
@@ -22,6 +26,7 @@ import {
     FaTrash,
 } from "react-icons/fa";
 import "../styles/ProductDetails.css";
+import Heading from "../components/common/Heading";
 const ProductDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -82,129 +87,18 @@ const ProductDetails = () => {
         };
         fetchProduct();
     }, [id]);
-    if (loading)
-        return (
-            <div className="product-details-page container">
-                <div
-                    className="skeleton-block"
-                    style={{
-                        width: 120,
-                        height: 20,
-                        marginBottom: "2.5rem",
-                        borderRadius: 8,
-                    }}
-                ></div>
-                <div className="product-details-skeleton-layout">
-                    <div>
-                        <div
-                            className="skeleton-block"
-                            style={{
-                                width: "100%",
-                                aspectRatio: "1/1",
-                                borderRadius: 20,
-                                marginBottom: "1.25rem",
-                            }}
-                        ></div>
-                        <div style={{ display: "flex", gap: "0.75rem" }}>
-                            {[1, 2, 3].map((i) => (
-                                <div
-                                    key={i}
-                                    className="skeleton-block"
-                                    style={{ width: 80, height: 80, borderRadius: 10 }}
-                                ></div>
-                            ))}
-                        </div>
-                    </div>
-                    <div
-                        style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
-                    >
-                        <div
-                            className="skeleton-block"
-                            style={{ width: 100, height: 28, borderRadius: 20 }}
-                        ></div>
-                        <div
-                            className="skeleton-block"
-                            style={{ width: "80%", height: 40, borderRadius: 8 }}
-                        ></div>
-                        <div
-                            className="skeleton-block"
-                            style={{ width: "50%", height: 28, borderRadius: 8 }}
-                        ></div>
-                        <div
-                            className="skeleton-block"
-                            style={{ width: "100%", height: 80, borderRadius: 12 }}
-                        ></div>
-                        <div
-                            style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "0.5rem",
-                            }}
-                        >
-                            <div
-                                className="skeleton-block"
-                                style={{ width: "100%", height: 16, borderRadius: 6 }}
-                            ></div>
-                            <div
-                                className="skeleton-block"
-                                style={{ width: "90%", height: 16, borderRadius: 6 }}
-                            ></div>
-                            <div
-                                className="skeleton-block"
-                                style={{ width: "75%", height: 16, borderRadius: 6 }}
-                            ></div>
-                        </div>
-                        <div style={{ display: "flex", gap: "1rem" }}>
-                            <div
-                                className="skeleton-block"
-                                style={{ flex: 1, height: 54, borderRadius: 10 }}
-                            ></div>
-                            <div
-                                className="skeleton-block"
-                                style={{ flex: 1, height: 54, borderRadius: 10 }}
-                            ></div>
-                        </div>
-                        <div
-                            style={{
-                                display: "grid",
-                                gridTemplateColumns: "1fr 1fr",
-                                gap: "1rem",
-                            }}
-                        >
-                            <div
-                                className="skeleton-block"
-                                style={{ height: 70, borderRadius: 10 }}
-                            ></div>
-                            <div
-                                className="skeleton-block"
-                                style={{ height: 70, borderRadius: 10 }}
-                            ></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
+    if (loading) return <ProductDetailsSkeleton />;
     if (error) return <div className="container error-msg">{error}</div>;
     if (!product) return null;
     return (
         <div className="product-details-page container">
-            <button
+            <Button
+                variant="ghost"
                 className="back-link"
                 onClick={() => navigate(-1)}
-                style={{
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    font: "inherit",
-                    color: "inherit",
-                }}
             >
                 <FaChevronLeft /> Back to Shop
-            </button>
+            </Button>
             <div className="product-details-layout">
                 <div className="product-gallery">
                     <div className="main-image">
@@ -224,7 +118,7 @@ const ProductDetails = () => {
                 </div>
                 <div className="product-info-details">
                     <span className="category-tag">{product.category}</span>
-                    <h1>{product.title}</h1>
+                    <Heading level={1}>{product.title}</Heading>
                     <div className="rating-row">
                         <div className="stars">
                             {Array.from({ length: 5 }, (_, i) => (
@@ -256,29 +150,28 @@ const ProductDetails = () => {
           </div> */}
                     <div className="action-buttons">
                         {isInCart ? (
-                            <div className="cart-management">
-                                <div className="detail-quantity-selector" style={{ flex: 1 }}>
-                                    <button onClick={handleDecrease} title="Decrease quantity">
-                                        <FaMinus />
-                                    </button>
-                                    <span style={{ flex: 1 }}>{cartItem.quantity}</span>
-                                    <button onClick={handleIncrease} title="Increase quantity">
-                                        <FaPlus />
-                                    </button>
-                                </div>
+                            <div className="quantity-selector">
+                                <label>Quantity</label>
+                                <QuantitySelector
+                                    quantity={cartItem.quantity}
+                                    onIncrease={handleIncrease}
+                                    onDecrease={handleDecrease}
+                                />
                             </div>
                         ) : (
-                            <button
-                                className="btn btn-primary btn-xl"
+                            <Button
+                                size="xl"
                                 onClick={handleAddToCart}
                                 disabled={product.stock === 0}
                                 style={{ flex: 1 }}
                             >
                                 <FaShoppingCart /> Add to Cart
-                            </button>
+                            </Button>
                         )}
-                        <button
-                            className={`btn btn-outline btn-xl ${isInWishlist ? "active" : ""}`}
+                        <Button
+                            variant="outline"
+                            size="xl"
+                            className={isInWishlist ? "active" : ""}
                             onClick={handleToggleWishlist}
                             style={{
                                 borderColor: isInWishlist ? "var(--error)" : "",
@@ -286,23 +179,23 @@ const ProductDetails = () => {
                             }}
                         >
                             <FaHeart /> {isInWishlist ? "Wishlisted" : "Add to Wishlist"}
-                        </button>
+                        </Button>
                     </div>
                     <div className="product-meta">
-                        <div className="meta-item">
-                            <FaShippingFast />
-                            <div>
-                                <h5>Fast Delivery</h5>
-                                <p>2-4 business days</p>
-                            </div>
-                        </div>
-                        <div className="meta-item">
-                            <FaShieldAlt />
-                            <div>
-                                <h5>Secure Warranty</h5>
-                                <p>1 year brand warranty</p>
-                            </div>
-                        </div>
+                        <PromoCard
+                            icon={FaShippingFast}
+                            title="Fast Delivery"
+                            description="2-4 business days"
+                            className="meta-item"
+                            titleLevel={5}
+                        />
+                        <PromoCard
+                            icon={FaShieldAlt}
+                            title="Secure Warranty"
+                            description="1 year brand warranty"
+                            className="meta-item"
+                            titleLevel={5}
+                        />
                     </div>
                 </div>
             </div>

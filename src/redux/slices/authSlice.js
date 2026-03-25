@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
   isAuthenticated: !!localStorage.getItem("user"),
+  registeredUsers: JSON.parse(localStorage.getItem("registered_users")) || [],
 };
 const authSlice = createSlice({
   name: "auth",
@@ -20,7 +21,13 @@ const authSlice = createSlice({
     signup: (state, action) => {
       state.user = action.payload;
       state.isAuthenticated = true;
-      localStorage.setItem("user", JSON.stringify(action.payload));
+      // Also add to registered users list for mock persistence
+      const newUser = action.payload;
+      if (!state.registeredUsers.find(u => u.email === newUser.email)) {
+        state.registeredUsers.push(newUser);
+        localStorage.setItem("registered_users", JSON.stringify(state.registeredUsers));
+      }
+      localStorage.setItem("user", JSON.stringify(newUser));
     },
   },
 });

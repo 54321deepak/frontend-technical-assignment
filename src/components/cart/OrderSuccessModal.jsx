@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { FaCheckCircle, FaShoppingBag, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Heading from "../common/Heading";
+import Button from "../common/Button";
 
 const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
         </div>
 
         <div className="success-content">
-          <h2>Order Placed Successfully!</h2>
+          <Heading level={2}>Order Placed Successfully!</Heading>
           <p>Thank you for your purchase. Your order <strong>#{orderDetails.id}</strong> has been received and is being processed.</p>
 
           <div className="order-summary-box">
@@ -49,9 +51,9 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
           </div>
 
           <div className="modal-actions">
-            <button className="btn btn-primary" onClick={handleClose}>
+            <Button onClick={handleClose}>
               <FaShoppingBag /> Continue Shopping
-            </button>
+            </Button>
           </div>
         </div>
       </div>

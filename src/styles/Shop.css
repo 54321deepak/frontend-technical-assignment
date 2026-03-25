@@ -81,6 +81,23 @@
     transform: scale(1.1);
 }
 
+.shop-title {
+    text-transform: capitalize;
+}
+
+.shop-subtitle {
+    font-size: 0.7em;
+    color: var(--text-muted);
+}
+
+.search-icon-muted {
+    color: var(--text-muted);
+}
+
+.empty-search-icon {
+    color: var(--primary);
+}
+
 .mobile-filter-btn {
     display: none;
     padding: 0.6rem 1rem;

@@ -55,7 +55,115 @@
 .contact-form-container .auth-card {
   padding: 3rem;
 }
+.contact-page.container {
+  padding: 2rem 1rem 6rem;
+}
+  
+.contact-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 4rem;
+}
+  
+.contact-header .description {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin-top: 1rem;
+}
+  
+.success-msg {
+  background: var(--bg-card);
+  padding: 4rem 2rem;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  border: 1px solid var(--success);
+  box-shadow: var(--shadow-subtle);
+}
+  
+.success-icon {
+  margin-bottom: 1.5rem;
+}
+  
+.success-title {
+  color: var(--text-main);
+  margin-bottom: 1rem;
+}
+  
+.success-desc {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+  
+.contact-form {
+  max-width: none !important;
+  margin: 0 !important;
+}
+  
+.contact-textarea {
+  min-height: 160px;
+  padding: 1rem;
+}
+  
+.contact-submit-btn {
+  margin-top: 1rem;
+  height: 54px;
+}
+
 @media (max-width: 992px) {
+  .contact-page.container {
+    padding: 2rem 1rem 6rem;
+  }
+  
+  .contact-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 4rem;
+  }
+  
+  .contact-header .description {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-top: 1rem;
+  }
+  
+  .success-msg {
+    background: var(--bg-card);
+    padding: 4rem 2rem;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    border: 1px solid var(--success);
+    box-shadow: var(--shadow-subtle);
+  }
+  
+  .success-icon {
+    margin-bottom: 1.5rem;
+  }
+  
+  .success-title {
+    color: var(--text-main);
+    margin-bottom: 1rem;
+  }
+  
+  .success-desc {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+  
+  .contact-form {
+    max-width: none !important;
+    margin: 0 !important;
+  }
+  
+  .contact-textarea {
+    min-height: 160px;
+    padding: 1rem;
+  }
+  
+  .contact-submit-btn {
+    margin-top: 1rem;
+    height: 54px;
+  }
+
   .contact-layout {
     grid-template-columns: 1fr;
     gap: 3rem;
