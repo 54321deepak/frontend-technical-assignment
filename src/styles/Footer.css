@@ -111,11 +111,12 @@
   }
 
   .footer .footer-container {
-    grid-template-columns: 1fr;
-    gap: 0rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
     text-align: center;
     padding-top: 2rem;
-    padding-bottom: 1rem;
+    padding-bottom: 2rem;
   }
 
   .footer-section {
@@ -129,6 +130,12 @@
   .contact-info p {
     justify-content: center;
     text-align: center;
+  }
+
+  .footer-section.about {
+    order: 4;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
   }
 
   .social-links {

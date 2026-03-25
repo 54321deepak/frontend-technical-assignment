@@ -31,7 +31,10 @@ const ShopSidebar = ({
         <ul className="category-list">
           <li
             className={category === "all" ? "active" : ""}
-            onClick={() => handleParamChange("category", "all")}
+            onClick={() => {
+              handleParamChange("category", "all");
+              setShowMobileFilters(false);
+            }}
           >
             All Categories
           </li>
@@ -44,7 +47,10 @@ const ShopSidebar = ({
                 <li
                   key={idx}
                   className={category === catSlug ? "active" : ""}
-                  onClick={() => handleParamChange("category", catSlug)}
+                  onClick={() => {
+                    handleParamChange("category", catSlug);
+                    setShowMobileFilters(false);
+                  }}
                 >
                   {catName}
                 </li>
