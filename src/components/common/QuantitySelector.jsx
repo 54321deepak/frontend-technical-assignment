@@ -6,10 +6,11 @@ const QuantitySelector = ({
   onIncrease, 
   onDecrease, 
   disabled = false,
-  className = "" 
+  className = "",
+  size = "md" 
 }) => {
   return (
-    <div className={`quantity-selector-standard ${className}`}>
+    <div className={`quantity-selector-standard ${size === 'xl' ? 'qty-xl' : ''} ${className}`}>
       <button 
         className="qty-pill-btn" 
         onClick={(e) => { e.preventDefault(); onDecrease(); }}

@@ -191,14 +191,17 @@
 
 .action-buttons {
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
   gap: 1rem;
 }
 
-.action-buttons .btn {
+.action-buttons > * {
   flex: 1;
+}
+
+.action-buttons .btn {
   padding: 1rem 1.5rem;
-  font-size: 1rem;
+  font-size: 1.05rem;
   height: 54px;
   display: flex;
   align-items: center;
